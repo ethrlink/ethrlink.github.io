@@ -1,0 +1,158 @@
+<!doctype>
+<html>
+
+<head>
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+<link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,800" rel="stylesheet">
+<link href="cover.css" rel="stylesheet">
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script type="text/javascript" src="web3.min.js"></script>
+<script type="text/javascript" src="init.js"></script>
+<style>
+
+.input-group{
+  width: 70% !important;
+  margin: 0 auto;
+}
+
+
+</style>
+</head>
+<body>
+    <div class="site-wrapper">
+
+      <div class="site-wrapper-inner">
+
+        <div class="cover-container">
+
+          <div class="masthead clearfix">
+            <div class="inner">
+              <h3 class="masthead-brand">ETHR.LINK</h3>
+
+            </div>
+          </div>
+
+          <div class="inner cover">
+            <h1 class="cover-heading">ETHEREUM LINK SHORTENER</h1>
+
+            <div class="start-wrapper">
+              <p class="lead desc">
+                This link shortener is fully hosted on github pages with ethereum smart contracts as its backend.<br><br>
+                You're paying for shortening based on url length and validity period.
+              </p>
+              <div class="alert alert-danger" role="alert" style="display:none">Please fill out all fields.</div>
+              <p class="lead">
+                  <div class="input-group">
+                    <span class="input-group-addon" id="basic-addon1">URL</span>
+                    <input type="text" class="url form-control" placeholder="http://google.de" aria-describedby="basic-addon1">
+                  </div>
+              </p>
+              <p class="lead">
+                  <div class="input-group">
+                    <span class="input-group-addon" id="basic-addon1">HTTP://ETHR.LINK/</span>
+                    <input type="text" class="key form-control" placeholder="xyz" aria-describedby="basic-addon1">
+                  </div>
+              </p>
+              <p class="lead">
+                  <div class="input-group">
+                    <span class="input-group-addon" id="basic-addon1">VALIDITY PERIOD (WEEKS)</span>
+                    <input type="text" class="period form-control" placeholder="1" aria-describedby="basic-addon1">
+                  </div>
+              </p>
+
+              <p class="lead cost-wrapper">
+                <span class="cost"></span> + gas
+              </p>
+
+              <p class="lead">
+                <a href="#" class="buy btn btn-lg btn-secondary" style="width:70%;margin-top:10px;">SHORTEN!</a>
+              </p>
+            </div>
+
+            <div class="done-wrapper" style="display:none">
+              <p class="lead desc">
+                Your Transaction was submitted successfully! <br>
+                Wait a few minutes until it has been accepted in the ethereum blockchain
+                <a target="_blank" class="tx-link" href="">(see status)</a><br><br>
+                 Your url will be accessible at <br>
+                <a target="_blank" href="" class="link" style="font-size:30px">http://ethr.link/</a><br>
+                <p class="lead">
+                  <a href="/" class="btn btn-lg btn-secondary" style="width:70%;margin-top:10px;">BACK</a>
+                </p>
+              </p>
+            </div>
+
+
+          </div>
+
+          <div class="mastfoot">
+            <div class="inner">
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script type="text/javascript">
+
+
+        function calcCost(){
+          weiPrice = 1000000000000000;
+          period = parseInt($(".period").val());
+          len = $(".key").val().length;
+          if(len > 5){
+              len = 5;
+          }
+          return weiPrice * (2 ** (5 - len)) * period;
+        }
+
+        $("input").on("keyup change", function(){
+          $(".alert").hide();
+          if($(".period").val() != "" && $(".key").val() != ""){
+            $(".cost-wrapper").show();
+          }else{
+            $(".cost-wrapper").hide();
+          }
+          $(".cost").html(calcCost() / 1000000000000000 + " milliether");
+        });
+
+        function startApp(web3){
+            var myContractInstance = getContractInstance(web3);
+
+            $(".buy").click(function(){
+
+                if($(".url").val() == "" || $(".period").val() == "" || $(".key").val() == ""){
+                  $(".alert").fadeIn();
+                  return;
+                }
+
+                var cost = calcCost();
+
+                myContractInstance.set($(".key").val(), $(".url").val(), parseInt($(".period").val()), {value: cost}, function(err, result){
+                  if(!err){
+                    $(".start-wrapper").hide();
+                    $(".done-wrapper").fadeIn();
+                    $(".tx-link").attr("href", "https://rinkeby.etherscan.io/tx/"+result);
+                    $(".link").attr("href", "http://ethr.link/"+$(".key").val());
+                    $(".link").html($(".link").html()+$(".key").val());
+                  }
+                });
+            });
+        }
+
+        window.addEventListener('load', function() {
+          // Check if Web3 has been injected by the browser:
+          if (typeof web3 !== 'undefined') {
+            // You have a web3 browser! Continue below!
+            startApp(web3);
+          } else {
+             // Warn the user that they need to get a web3 browser
+             // Or install MetaMask, maybe with a nice graphic.
+          }
+        });
+
+    </script>
+</body>
+</html>

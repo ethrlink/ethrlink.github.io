@@ -1,0 +1,96 @@
+<!doctype>
+<html>
+
+<head>
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+<link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,800" rel="stylesheet">
+<link href="cover.css" rel="stylesheet">
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script type="text/javascript" src="web3.min.js"></script>
+<script type="text/javascript" src="init.js"></script>
+<style>
+.cover-container{
+      margin-top: 129px;
+}
+</style>
+
+</head>
+<body>
+
+  <div class="site-wrapper">
+
+    <div class="site-wrapper-inner">
+
+      <div class="cover-container">
+
+        <div class="masthead clearfix">
+          <div class="inner">
+            <h3 class="masthead-brand">ETHR.LINK</h3>
+
+          </div>
+        </div>
+
+        <div class="inner cover">
+          <h1 class="cover-heading">FORWARDING<span class="loading"></span></h1>
+          <p class="lead">
+            This link shortener is using ethereum smart contracts as its backend!
+            <br><br>
+            <span style="font-size:13px !important;">We are not responsible for any content you see after this page.</span>
+          </p>
+          <p class="lead">
+            <br>
+            <a href="/" class="buy btn btn-lg btn-secondary">GO TO ETHR.LINK</a>
+          </p>
+        </div>
+
+        <div class="mastfoot">
+          <div class="inner">
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+      window.setInterval(function(){
+        if($(".loading").html().length > 5){
+          return;
+        }
+        $(".loading").html($(".loading").html()+".");
+      }, 350);
+
+
+      function startApp(web3){
+        var myContractInstance = getContractInstance(web3);
+
+        if(location.hostname == "localhost"){
+            var link = location.hash.replace("#", "");
+        }else{
+            var link = location.pathname.replace("/", "");
+        }
+
+        if(link != ""){
+            var result = myContractInstance.get(link, function(err, result){
+                window.setTimeout(function(){
+                    document.location.href=result;
+                }, 1000);
+            });
+        }
+      }
+
+      window.addEventListener('load', function() {
+        // Check if Web3 has been injected by the browser:
+        if (typeof web3 !== 'undefined') {
+          // You have a web3 browser! Continue below!
+          startApp(web3);
+        } else {
+           var web3 = new Web3(new Web3.providers.HttpProvider('https://rinkeby.infura.io/'));
+           startApp(web3);
+        }
+      });
+  </script>
+
+</body>
+</html>
