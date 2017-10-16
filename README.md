@@ -1,6 +1,6 @@
 # README - FAQ
 
-## What it is ethrlink?
+## What is ethrlink?
 Ethrlink is a link shortener using an ethereum smart contract as its backend. All links are saved on the blockchain and the rest is statically served from github. That's it.
 
 When you buy a short link on ethrlink, you can choose your custom url key and validity period.
