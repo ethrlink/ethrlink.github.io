@@ -195,3 +195,7 @@ h1{
 .alert a{
   color: #444;
 }
+
+.btn-rnd{
+  cursor: pointer;
+}

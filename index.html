@@ -13,7 +13,7 @@
 <style>
 
 .input-group{
-  width: 70% !important;
+  width: 80% !important;
   margin: 0 auto;
 }
 
@@ -55,6 +55,10 @@
                   <div class="input-group">
                     <span class="input-group-addon" id="basic-addon1">HTTP://ETHR.LINK/</span>
                     <input type="text" class="key form-control" placeholder="key" aria-describedby="basic-addon1">
+                    <span class="input-group-addon btn-rnd">
+                      <i class="glyphicon glyphicon-random"></i>
+                    </span>
+
                   </div>
               </p>
               <p class="lead">
@@ -69,7 +73,7 @@
               </p>
 
               <p class="lead">
-                <a href="#" class="buy btn btn-lg btn-secondary" style="width:70%;margin-top:10px;">SHORTEN!</a>
+                <a href="#" class="buy btn btn-lg btn-secondary" style="width:80%;margin-top:10px;">SHORTEN!</a>
               </p>
             </div>
 
@@ -91,7 +95,7 @@
 
           <div class="mastfoot">
             <div class="inner">
-              <a href="https://github.com/ethrlink/ethrlink.github.io/blob/master/README.md">About</a>&nbsp;|&nbsp;<a href="https://github.com/ethrlink/ethrlink.github.io">Source @ GitHub</a>&nbsp;|&nbsp;<a href="https://github.com/ethrlink/ethrlink.github.io/issues">Flag URLS</a>
+              <a href="https://github.com/ethrlink/ethrlink.github.io/blob/master/README.md">About</a>&nbsp;|&nbsp;<a href="https://github.com/ethrlink/ethrlink.github.io">Source @ GitHub</a>&nbsp;|&nbsp;<a href="https://github.com/ethrlink/ethrlink.github.io/issues">Flag URLs</a>
             </div>
           </div>
         </div>
@@ -122,6 +126,10 @@
           $(".cost").html(calcCost() / 1000000000000000 + " milliether");
         });
 
+        $(".btn-rnd").click(function(){
+          $(".key").val(Math.random().toString(36).replace(/[^a-z]+/g, '').substr(1, 5));
+        });
+
         function startApp(web3){
             var myContractInstance = getContractInstance(web3);
 
@@ -143,7 +151,7 @@
                     if(!err){
                       $(".start-wrapper").hide();
                       $(".done-wrapper").fadeIn();
-                      $(".tx-link").attr("href", "https://rinkeby.etherscan.io/tx/"+result);
+                      $(".tx-link").attr("href", "https://etherscan.io/tx/"+result);
                       $(".link").attr("href", "http://ethr.link/"+$(".key").val());
                       $(".link").html($(".link").html()+$(".key").val());
                     }
