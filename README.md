@@ -5,6 +5,9 @@ Ethrlink is a link shortener using an ethereum smart contract as its backend. Al
 
 When you buy a short link on ethrlink, you can choose your custom url key and validity period.
 
+See example link (to ethereum.org): [http://ethr.link/ether](http://ethr.link/ether)
+
+
 ## So you're charging money for short links?
 Exactly. 
 
