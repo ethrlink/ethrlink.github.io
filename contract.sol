@@ -9,7 +9,7 @@ contract ETHRLINK {
     }
 
     uint public constant weiPrice = 1000000000000000;
-    uint public constant timeUnit = 1 hours;
+    uint public constant timeUnit = 30 days;
 
     address contractOwner;
     address withdrawWallet;

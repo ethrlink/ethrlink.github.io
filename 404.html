@@ -32,6 +32,7 @@
         </div>
 
         <div class="inner cover">
+
           <h1 class="cover-heading">FORWARDING<span class="loading"></span></h1>
           <p class="lead">
             This link shortener is using ethereum smart contracts as its backend!
@@ -39,6 +40,7 @@
             <span style="font-size:13px !important;">We are not responsible for any content you see after this page.</span>
           </p>
           <p class="lead">
+            <div class="alert alert1 alert-danger" role="alert" style="display:none">Invalid or expired link.</div>
             <br>
             <a href="/" class="buy btn btn-lg btn-secondary">GO TO ETHR.LINK</a>
           </p>
@@ -72,10 +74,14 @@
         }
 
         if(link != ""){
-            var result = myContractInstance.get(link, function(err, result){
-                window.setTimeout(function(){
-                    document.location.href=result;
-                }, 1000);
+            myContractInstance.get(link, function(err, result){
+              if(result == ""){
+                $(".alert1").fadeIn();
+                return;
+              }
+              window.setTimeout(function(){
+                  document.location.href=result;
+              }, 1000);
             });
         }
       }

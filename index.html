@@ -2,6 +2,7 @@
 <html>
 
 <head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,800" rel="stylesheet">
 <link href="cover.css" rel="stylesheet">
@@ -39,25 +40,27 @@
             <div class="start-wrapper">
               <p class="lead desc">
                 This link shortener is fully hosted on github pages with ethereum smart contracts as its backend.<br><br>
-                You're paying for shortening based on url length and validity period.
+                You're paying for shortening based on your chosen key length and validity period.
               </p>
-              <div class="alert alert-danger" role="alert" style="display:none">Please fill out all fields.</div>
+              <div class="alert alert1 alert-danger" role="alert" style="display:none">Please fill out all fields.</div>
+              <div class="alert alert2 alert-danger" role="alert" style="display:none">This key is already in use.</div>
+              <div class="alert alert3 alert-danger" role="alert" style="display:none">You need an ethereum enabled web browser like <a href="https://ethcore.io/parity.html">Parity</a>, <a href="https://github.com/ethereum/mist/releases">Mist</a> or the <a href="https://metamask.io/">Metamask Chrome Extension</a> to create your own short links.</div>
               <p class="lead">
                   <div class="input-group">
-                    <span class="input-group-addon" id="basic-addon1">URL</span>
+                    <span class="input-group-addon" id="basic-addon1">FULL URL</span>
                     <input type="text" class="url form-control" placeholder="http://google.de" aria-describedby="basic-addon1">
                   </div>
               </p>
               <p class="lead">
                   <div class="input-group">
                     <span class="input-group-addon" id="basic-addon1">HTTP://ETHR.LINK/</span>
-                    <input type="text" class="key form-control" placeholder="xyz" aria-describedby="basic-addon1">
+                    <input type="text" class="key form-control" placeholder="key" aria-describedby="basic-addon1">
                   </div>
               </p>
               <p class="lead">
                   <div class="input-group">
-                    <span class="input-group-addon" id="basic-addon1">VALIDITY PERIOD (WEEKS)</span>
-                    <input type="text" class="period form-control" placeholder="1" aria-describedby="basic-addon1">
+                    <span class="input-group-addon" id="basic-addon1">VALIDITY PERIOD (MONTHS)</span>
+                    <input type="text" class="period form-control" placeholder="1" value="1" aria-describedby="basic-addon1">
                   </div>
               </p>
 
@@ -72,7 +75,7 @@
 
             <div class="done-wrapper" style="display:none">
               <p class="lead desc">
-                Your Transaction was submitted successfully! <br>
+                Your transaction was submitted successfully! <br>
                 Wait a few minutes until it has been accepted in the ethereum blockchain
                 <a target="_blank" class="tx-link" href="">(see status)</a><br><br>
                  Your url will be accessible at <br>
@@ -88,7 +91,7 @@
 
           <div class="mastfoot">
             <div class="inner">
-
+              <a href="https://github.com/ethrlink/ethrlink.github.io/blob/master/README.md">About</a>&nbsp;|&nbsp;<a href="https://github.com/ethrlink/ethrlink.github.io">Source @ GitHub</a>&nbsp;|&nbsp;<a href="https://github.com/ethrlink/ethrlink.github.io/issues">Flag URLS</a>
             </div>
           </div>
         </div>
@@ -110,6 +113,7 @@
 
         $("input").on("keyup change", function(){
           $(".alert").hide();
+
           if($(".period").val() != "" && $(".key").val() != ""){
             $(".cost-wrapper").show();
           }else{
@@ -124,21 +128,28 @@
             $(".buy").click(function(){
 
                 if($(".url").val() == "" || $(".period").val() == "" || $(".key").val() == ""){
-                  $(".alert").fadeIn();
+                  $(".alert1").fadeIn();
                   return;
                 }
 
                 var cost = calcCost();
 
-                myContractInstance.set($(".key").val(), $(".url").val(), parseInt($(".period").val()), {value: cost}, function(err, result){
-                  if(!err){
-                    $(".start-wrapper").hide();
-                    $(".done-wrapper").fadeIn();
-                    $(".tx-link").attr("href", "https://rinkeby.etherscan.io/tx/"+result);
-                    $(".link").attr("href", "http://ethr.link/"+$(".key").val());
-                    $(".link").html($(".link").html()+$(".key").val());
+                myContractInstance.get($(".key").val(), function(err, result){
+                  if(result != ""){
+                    $(".alert2").fadeIn();
+                    return;
                   }
+                  myContractInstance.set($(".key").val(), $(".url").val(), parseInt($(".period").val()), {value: cost}, function(err, result){
+                    if(!err){
+                      $(".start-wrapper").hide();
+                      $(".done-wrapper").fadeIn();
+                      $(".tx-link").attr("href", "https://rinkeby.etherscan.io/tx/"+result);
+                      $(".link").attr("href", "http://ethr.link/"+$(".key").val());
+                      $(".link").html($(".link").html()+$(".key").val());
+                    }
+                  });
                 });
+
             });
         }
 
@@ -148,6 +159,7 @@
             // You have a web3 browser! Continue below!
             startApp(web3);
           } else {
+              $(".alert3").fadeIn();
              // Warn the user that they need to get a web3 browser
              // Or install MetaMask, maybe with a nice graphic.
           }

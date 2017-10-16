@@ -191,3 +191,7 @@ body{
 h1{
   font-family: "open sans";
 }
+
+.alert a{
+  color: #444;
+}
